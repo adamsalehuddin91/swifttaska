@@ -1,0 +1,636 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      UserRole @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Role-specific relationships
+  teacher Teacher?
+  parent  Parent?
+
+  // Admin activities
+  createdStudents Student[] @relation("CreatedBy")
+  createdTeachers Teacher[] @relation("CreatedBy")
+
+  // Communication
+  sentMessages         Message[]      @relation("SentMessages")
+  receivedMessages     Message[]      @relation("ReceivedMessages")
+  createdAnnouncements Announcement[] @relation("CreatedAnnouncements")
+
+  // Phase 2: Communication Hub
+  conversationsOne Conversation[] @relation("ConversationsOne")
+  conversationsTwo Conversation[] @relation("ConversationsTwo")
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  PARENT
+}
+
+model Student {
+  id        String @id @default(cuid())
+  studentId String @unique
+
+  // Basic biodata
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime
+  gender           Gender
+  nationality      String
+  religion         String?
+  medicalInfo      String?
+  allergies        String?
+  emergencyContact String?
+  profilePhoto     String? // NEW: Profile photo URL
+
+  // Address
+  address  String
+  city     String
+  state    String
+  postcode String
+
+  // Parents info
+  fatherName       String
+  fatherPhone      String
+  fatherEmail      String?
+  fatherOccupation String?
+
+  motherName       String
+  motherPhone      String
+  motherEmail      String?
+  motherOccupation String?
+
+  // Guardian (if different from parents)
+  guardianName         String?
+  guardianPhone        String?
+  guardianEmail        String?
+  guardianRelationship String?
+
+  // School info
+  classId        String?
+  class          Class?        @relation(fields: [classId], references: [id])
+  enrollmentDate DateTime      @default(now())
+  status         StudentStatus @default(ACTIVE)
+
+  // Relationships
+  attendances   Attendance[]
+  fees          Fee[]
+  activities    StudentActivity[]
+  parents       Parent[] // NEW: Parent relationships
+  progressNotes ProgressNote[] // NEW: Progress notes
+  mealSubscription MealSubscription? // NEW: Canteen tracking
+
+  // Meta
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  WITHDRAWN
+}
+
+model Teacher {
+  id         String @id @default(cuid())
+  employeeId String @unique
+
+  // Basic info
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      Gender
+  nationality String
+  phone       String
+  email       String
+
+  // Address
+  address  String
+  city     String
+  state    String
+  postcode String
+
+  // Employment
+  position   String
+  department String?
+  hireDate   DateTime
+  salary     Float?
+  status     TeacherStatus @default(ACTIVE)
+
+  // Education & Qualifications
+  qualifications String?
+  experience     String?
+
+  // User account
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relationships
+  classes       Class[]
+  attendances   Attendance[]   @relation("TakenBy")
+  activities    Activity[]     @relation("CreatedBy")
+  progressNotes ProgressNote[] @relation("ProgressNotes")
+  leaveRequests LeaveRequest[] // NEW: HR tracking
+  payrolls      Payroll[]      // NEW: HR tracking
+
+  // Meta
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+}
+
+enum TeacherStatus {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+model Class {
+  id           String @id @default(cuid())
+  name         String
+  level        String // e.g., "Nursery", "Pre-K", "Kindergarten"
+  capacity     Int
+  academicYear String
+
+  // Teacher assignment
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+
+  // Students
+  students Student[]
+
+  // Relationships
+  attendances Attendance[]
+  activities  Activity[]
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendance {
+  id           String           @id @default(cuid())
+  date         DateTime
+  status       AttendanceStatus
+  checkInTime  DateTime? // Phase 1: Automated Attendance
+  checkOutTime DateTime? // Phase 1: Automated Attendance
+  notes        String?
+
+  // Relationships
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  takenById String
+  takenBy   Teacher @relation("TakenBy", fields: [takenById], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, date])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  SICK
+  EXCUSED
+}
+
+model Fee {
+  id            String    @id @default(cuid())
+  type          FeeType
+  description   String
+  amount        Float
+  dueDate       DateTime
+  status        FeeStatus @default(PENDING)
+  paidDate      DateTime?
+  paidAmount    Float?
+  paymentMethod String?
+  notes         String?
+
+  // Relationships
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  payment Payment? // Phase 1: Payment Gateway
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FeeType {
+  TUITION
+  REGISTRATION
+  ACTIVITY
+  TRANSPORT
+  MEAL
+  UNIFORM
+  BOOKS
+  MEDICAL
+  OTHER
+}
+
+enum FeeStatus {
+  PENDING
+  PAID
+  PARTIAL
+  OVERDUE
+  WAIVED
+}
+
+model Activity {
+  id              String         @id @default(cuid())
+  name            String
+  description     String?
+  type            ActivityType
+  date            DateTime
+  duration        Int? // in minutes
+  location        String?
+  maxParticipants Int?
+  photos          String? // NEW: Comma-separated photo URLs
+  materials       String? // NEW: Materials needed
+  objectives      String? // NEW: Learning objectives
+  status          ActivityStatus @default(PLANNED) // NEW: Activity status
+
+  // Relationships
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  createdById String
+  createdBy   Teacher @relation("CreatedBy", fields: [createdById], references: [id])
+
+  participants StudentActivity[]
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ActivityType {
+  ACADEMIC
+  SPORTS
+  ARTS
+  MUSIC
+  FIELD_TRIP
+  CELEBRATION
+  WORKSHOP
+  OTHER
+}
+
+model StudentActivity {
+  id           String  @id @default(cuid())
+  participated Boolean @default(false)
+  notes        String?
+
+  // Relationships
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, activityId])
+}
+
+// NEW MODELS FOR PARENT PORTAL & COMMUNICATION
+
+model Parent {
+  id String @id @default(cuid())
+
+  // Basic info
+  firstName    String
+  lastName     String
+  phone        String
+  email        String
+  relationship ParentRelationship // Father, Mother, Guardian
+  occupation   String?
+
+  // User account
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Children
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ParentRelationship {
+  FATHER
+  MOTHER
+  GUARDIAN
+}
+
+model ProgressNote {
+  id              String           @id @default(cuid())
+  title           String
+  content         String
+  category        ProgressCategory
+  milestone       String? // Optional milestone achievement
+  photos          String? // Comma-separated photo URLs
+  visibleToParent Boolean          @default(true)
+
+  // Relationships
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation("ProgressNotes", fields: [teacherId], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProgressCategory {
+  ACADEMIC
+  SOCIAL
+  EMOTIONAL
+  PHYSICAL
+  BEHAVIORAL
+  GENERAL
+}
+
+enum ActivityStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Message {
+  id            String          @id @default(cuid())
+  subject       String
+  content       String
+  isRead        Boolean         @default(false)
+  readAt        DateTime?
+  priority      MessagePriority @default(NORMAL)
+  attachmentUrl String? // Phase 2: Communication Hub
+
+  // Relationships
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+
+  // Relationships
+  senderId String
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id])
+
+  recipientId String
+  recipient   User   @relation("ReceivedMessages", fields: [recipientId], references: [id])
+
+  // Optional: Link to student for context
+  studentId String?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recipientId, isRead])
+  @@index([senderId])
+}
+
+enum MessagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model Announcement {
+  id             String           @id @default(cuid())
+  title          String
+  content        String
+  type           AnnouncementType
+  targetAudience String // "ALL", "PARENTS", "TEACHERS", specific class IDs
+  expiresAt      DateTime?
+  isPinned       Boolean          @default(false)
+
+  // Optional attachments
+  attachments String? // Comma-separated file URLs
+
+  // Relationships
+  classId String? // Optional: specific class
+
+  createdById String
+  createdBy   User   @relation("CreatedAnnouncements", fields: [createdById], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AnnouncementType {
+  GENERAL
+  EVENT
+  REMINDER
+  EMERGENCY
+  ACHIEVEMENT
+}
+
+// ==========================================
+// NEW PHASE 1 & 2 MODELS
+// ==========================================
+
+model Lead {
+  id         String     @id @default(cuid())
+  parentName String
+  childName  String
+  phone      String
+  email      String?
+  status     LeadStatus @default(NEW)
+  notes      String?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  TOUR_SCHEDULED
+  ENROLLED
+  REJECTED
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  provider        String // e.g., "STRIPE", "TOYYIBPAY"
+  paymentIntentId String?       @unique
+  amount          Float
+  status          PaymentStatus @default(PENDING)
+
+  // Relationships
+  feeId String @unique
+  fee   Fee    @relation(fields: [feeId], references: [id])
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Conversation {
+  id      String  @id @default(cuid())
+  subject String?
+
+  // Participants (Direct messaging between 2 users)
+  participantOneId String
+  participantOne   User   @relation("ConversationsOne", fields: [participantOneId], references: [id])
+
+  participantTwoId String
+  participantTwo   User   @relation("ConversationsTwo", fields: [participantTwoId], references: [id])
+
+  messages Message[]
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([participantOneId, participantTwoId])
+}
+
+// ==========================================
+// NEW PHASE 3 MODELS (CANTEEN & HR)
+// ==========================================
+
+model MealPlan {
+  id          String   @id @default(cuid())
+  date        DateTime
+  type        MealType
+  name        String
+  description String?
+  ingredients String? // Track for allergies
+  nutritional String? // Optional JSON string or text
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, type])
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACK
+}
+
+model MealSubscription {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  startDate DateTime
+  endDate   DateTime?
+  status    MealSubscriptionStatus @default(ACTIVE)
+  notes     String?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId])
+}
+
+enum MealSubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model LeaveRequest {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  type      LeaveType
+  reason    String
+  status    LeaveStatus @default(PENDING)
+  adminNote String?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LeaveType {
+  SICK
+  ANNUAL
+  MATERNITY
+  UNPAID
+  EMERGENCY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Payroll {
+  id          String   @id @default(cuid())
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  month       Int      // 1-12
+  year        Int      // e.g. 2026
+  baseSalary  Float
+  deductions  Float    @default(0)
+  bonuses     Float    @default(0)
+  netPay      Float
+  status      PayrollStatus @default(DRAFT)
+  paidDate    DateTime?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teacherId, month, year])
+}
+
+enum PayrollStatus {
+  DRAFT
+  PUBLISHED
+  PAID
+}
