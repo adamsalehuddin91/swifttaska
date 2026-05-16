@@ -12,12 +12,20 @@ RUN npx prisma generate
 COPY . .
 RUN npm run build
 
+# Bake demo DB into image during build
+RUN mkdir -p /app/data
+RUN DATABASE_URL="file:/app/data/database.db" npx prisma migrate deploy
+RUN DATABASE_URL="file:/app/data/database.db" node prisma/seed.mjs
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URL="file:/app/data/database.db"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 RUN apk add --no-cache openssl
 
@@ -28,24 +36,17 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Prisma runtime
-COPY --from=builder /app/prisma ./prisma
+# Prisma runtime client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
-# Seed script dependencies
-COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+# Pre-seeded SQLite DB
+COPY --from=builder /app/data ./data
 
-COPY docker/startup.sh ./startup.sh
-RUN chmod +x ./startup.sh && \
-    mkdir -p /app/data && \
-    chown -R nextjs:nodejs /app /app/data
+RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "./startup.sh"]
+CMD ["node", "server.js"]
