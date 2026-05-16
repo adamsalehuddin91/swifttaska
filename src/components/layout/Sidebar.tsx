@@ -69,8 +69,8 @@ export default function Sidebar() {
             <TrendingUp size={14} className="text-blue-200" />
             <p className="text-[10px] font-semibold text-blue-100 uppercase tracking-wider">Pakej Semasa</p>
           </div>
-          <p className="font-bold text-sm mb-0.5">Taska Standard</p>
-          <p className="text-blue-200 text-[10px] mb-3">Package v1.0.0</p>
+          <p className="font-bold text-sm mb-0.5">Pakej Standard</p>
+          <p className="text-blue-200 text-[10px] mb-3">RM 300/bulan · Aktif</p>
           <button className="w-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors">
             Naik Taraf Plan
           </button>

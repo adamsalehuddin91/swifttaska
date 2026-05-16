@@ -1,146 +1,288 @@
 import Link from "next/link";
+import { Check, Star, Zap, Shield, Users, Phone } from "lucide-react";
+
+const features = [
+  { icon: "👨‍👩‍👧", title: "Pengurusan Pelajar", desc: "Profil lengkap kanak-kanak, biodata, rekod kesihatan dan maklumat penjaga dalam satu tempat." },
+  { icon: "📋", title: "Kehadiran QR Digital", desc: "Imbas QR, kehadiran terus direkod. Laporan bulanan auto-generate untuk pihak JKM." },
+  { icon: "💰", title: "Pengurusan Yuran", desc: "Rekod bayaran, jana resit digital, notifikasi tertunggak — tiada lagi Microsoft Excel." },
+  { icon: "📱", title: "Parent PWA", desc: "Ibu bapa boleh tengok kehadiran, aktiviti & rekod harian anak terus dari telefon — tanpa install app." },
+  { icon: "📢", title: "Pengumuman & Aktiviti", desc: "Hantar notifikasi kepada semua ibu bapa serentak. Jadual aktiviti, cuti umum & event taska." },
+  { icon: "📊", title: "Laporan & Analitik", desc: "Dashboard statistik kehadiran, kutipan yuran, rekod harian — semua dalam satu pandangan." },
+];
+
+const plans = [
+  {
+    name: "Basic",
+    tagline: "Taska kecil, permulaan digital",
+    setup: "RM 3,000",
+    monthly: "RM 200",
+    color: "border-slate-200",
+    badge: null,
+    features: [
+      "Sehingga 30 pelajar",
+      "Pengurusan pelajar & penjaga",
+      "Kehadiran QR digital",
+      "Parent PWA (baca sahaja)",
+      "1 akaun pengguna",
+      "Sokongan via WhatsApp",
+    ],
+  },
+  {
+    name: "Standard",
+    tagline: "Paling popular untuk taska aktif",
+    setup: "RM 5,000",
+    monthly: "RM 300",
+    color: "border-blue-500",
+    badge: "Paling Popular",
+    features: [
+      "Sehingga 80 pelajar",
+      "Semua ciri Basic",
+      "Pengurusan yuran & resit digital",
+      "Rekod harian (makan/tidur/mood)",
+      "Pengumuman & aktiviti",
+      "3 akaun pengguna",
+      "Laporan bulanan PDF",
+      "Sokongan prioriti",
+    ],
+  },
+  {
+    name: "Premium",
+    tagline: "Multi-kelas, operasi penuh",
+    setup: "RM 8,000",
+    monthly: "RM 450",
+    color: "border-indigo-400",
+    badge: null,
+    features: [
+      "Pelajar tidak terhad",
+      "Semua ciri Standard",
+      "Multi-kelas & multi-cawangan",
+      "Pengurusan guru & jadual",
+      "HR asas (slip gaji, cuti)",
+      "Laporan advanced & eksport",
+      "Akaun pengguna tidak terhad",
+      "Sokongan dedicated + onsite setup",
+    ],
+  },
+];
+
+const paymentSteps = [
+  { step: "50%", label: "Deposit", desc: "Bayar separuh sebelum kerja mula — untuk confirm tempahan." },
+  { step: "30%", label: "Demo Siap", desc: "Bayar selepas anda setuju dengan demo sistem." },
+  { step: "20%", label: "Go-Live", desc: "Bayar baki selepas sistem live dan anda berpuas hati." },
+];
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white text-slate-800">
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900">SwiftTaska</h1>
-              </div>
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex justify-between items-center py-4">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+              <span className="text-white text-lg font-bold">S</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/auth/signin"
-                className="text-gray-600 hover:text-gray-900 font-medium"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Get Started
-              </Link>
-            </div>
+            <span className="text-xl font-bold text-slate-900">SwiftTaska</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <a href="https://wa.me/60XXXXXXXXX" className="hidden sm:flex items-center gap-1.5 text-sm text-slate-600 hover:text-blue-600 transition-colors font-medium">
+              <Phone size={15} /> Hubungi Kami
+            </a>
+            <Link href="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
+              Cuba Demo
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center py-16 sm:py-20">
-          <h2 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
-            Complete Management System for
-            <span className="text-blue-600 block">Nursery & Kindergarten</span>
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Streamline your taska operations with comprehensive student management,
-            attendance tracking, billing, and activity planning - all in one platform.
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full mb-5 tracking-wide uppercase">
+            Sistem Pengurusan Taska #1 Malaysia
+          </span>
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 leading-tight mb-5">
+            Uruskan Taska Anda<br />
+            <span className="text-blue-600">Lebih Mudah & Professional</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-slate-500 mb-8 max-w-2xl mx-auto">
+            Dari kehadiran QR, rekod harian, yuran hingga parent app — semua dalam satu sistem.
+            Ibu bapa pun boleh pantau anak dari telefon tanpa download app.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/auth/signup"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-lg"
-            >
-              Start Free Trial
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/dashboard" className="bg-blue-600 text-white px-8 py-3.5 rounded-xl font-bold text-base hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+              Cuba Demo Percuma →
             </Link>
-            <Link
-              href="/dashboard"
-              className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors text-lg"
-            >
-              View Demo
-            </Link>
+            <a href="#pricing" className="border border-slate-200 text-slate-700 px-8 py-3.5 rounded-xl font-semibold text-base hover:bg-slate-50 transition-colors">
+              Lihat Harga
+            </a>
+          </div>
+          <p className="text-xs text-slate-400 mt-4">Tiada kontrak jangka panjang · Setup dalam 3-5 hari bekerja</p>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-3">Semua Yang Taska Anda Perlukan</h2>
+            <p className="text-slate-500 max-w-xl mx-auto">Direka khas untuk taska swasta Malaysia — bukan sistem generik dari luar negara.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <div key={f.title} className="bg-slate-50 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="text-3xl mb-3">{f.icon}</div>
+                <h3 className="font-bold text-slate-900 mb-1.5">{f.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-16">
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Student Management</h3>
-            <p className="text-gray-600">Complete student profiles with biodata, parent information, medical records, and enrollment tracking.</p>
+      {/* Pricing */}
+      <section id="pricing" className="py-20 px-4 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-3">Pilih Pakej Yang Sesuai</h2>
+            <p className="text-slate-500 max-w-xl mx-auto">Harga telus, tanpa caj tersembunyi. Setup sekali, langganan bulanan yang berbaloi.</p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Attendance Tracking</h3>
-            <p className="text-gray-600">Digital attendance system with real-time tracking, notifications, and detailed reporting.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            {plans.map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative bg-white rounded-2xl border-2 ${plan.color} p-7 flex flex-col ${plan.badge ? "shadow-xl shadow-blue-100 scale-[1.02]" : "shadow-sm"}`}
+              >
+                {plan.badge && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow">
+                      ⭐ {plan.badge}
+                    </span>
+                  </div>
+                )}
+
+                <div className="mb-5">
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">{plan.name}</h3>
+                  <p className="text-sm text-slate-400">{plan.tagline}</p>
+                </div>
+
+                <div className="mb-2">
+                  <p className="text-sm text-slate-500 mb-0.5">Setup (sekali bayar)</p>
+                  <p className="text-2xl font-extrabold text-slate-900">{plan.setup}</p>
+                </div>
+                <div className="mb-6 pb-6 border-b border-slate-100">
+                  <p className="text-sm text-slate-500 mb-0.5">Langganan bulanan</p>
+                  <p className="text-3xl font-extrabold text-blue-600">{plan.monthly}<span className="text-base font-normal text-slate-400">/bln</span></p>
+                </div>
+
+                <ul className="space-y-2.5 mb-8 flex-1">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-start gap-2.5 text-sm text-slate-700">
+                      <Check size={15} className="text-emerald-500 mt-0.5 shrink-0" />
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href="https://wa.me/60XXXXXXXXX"
+                  className={`block text-center py-3 rounded-xl font-bold text-sm transition-colors ${
+                    plan.badge
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  Dapatkan Pakej {plan.name}
+                </a>
+              </div>
+            ))}
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-              </svg>
+          {/* Payment terms */}
+          <div className="mt-12 bg-white rounded-2xl border border-slate-200 p-8">
+            <h3 className="text-lg font-bold text-slate-900 mb-1.5 text-center">Cara Bayaran Setup Fee</h3>
+            <p className="text-sm text-slate-400 text-center mb-8">Bayaran dibahagi 3 fasa — ringan untuk cash flow taska anda.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {paymentSteps.map((s, i) => (
+                <div key={s.step} className="text-center">
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-blue-700 font-extrabold text-lg">{s.step}</span>
+                  </div>
+                  <p className="font-bold text-slate-900 mb-1">{s.label}</p>
+                  <p className="text-sm text-slate-500">{s.desc}</p>
+                  {i < 2 && (
+                    <div className="hidden sm:block absolute right-0 top-1/2 text-slate-300 text-2xl">→</div>
+                  )}
+                </div>
+              ))}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Billing & Payments</h3>
-            <p className="text-gray-600">Automated billing system with multiple fee types, payment tracking, and financial reporting.</p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Teacher Portal</h3>
-            <p className="text-gray-600">Comprehensive teacher management with profiles, schedules, and performance tracking.</p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Class Management</h3>
-            <p className="text-gray-600">Organize classes, assign teachers, manage capacity, and track academic progress.</p>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1M9 16h1m4 0h1M12 6h3l-3-3-3 3h3z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Activities & Events</h3>
-            <p className="text-gray-600">Plan and manage educational activities, field trips, and special events with participation tracking.</p>
+            <p className="text-xs text-center text-slate-400 mt-6">
+              Pakej Premium: boleh bayar setup dalam 3 ansuran bulanan (RM2,700 → RM2,700 → RM2,600)
+            </p>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Social proof / Why SwiftTaska */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">Kenapa Pilih SwiftTaska?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                <Shield size={26} className="text-emerald-600" />
+              </div>
+              <p className="font-bold text-slate-900">Dibina untuk Malaysia</p>
+              <p className="text-sm text-slate-500">UI penuh Bahasa Malaysia. Sesuai dengan workflow taska tempatan dan keperluan JKM.</p>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
+                <Users size={26} className="text-blue-600" />
+              </div>
+              <p className="font-bold text-slate-900">Parent App Percuma</p>
+              <p className="text-sm text-slate-500">Ibu bapa pantau anak dari telefon — kehadiran, aktiviti, yuran. Tak perlu install apa-apa.</p>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-violet-50 rounded-2xl flex items-center justify-center">
+                <Zap size={26} className="text-violet-600" />
+              </div>
+              <p className="font-bold text-slate-900">Go-Live dalam 5 Hari</p>
+              <p className="text-sm text-slate-500">Setup cepat, training included, sokongan WhatsApp terus dengan developer.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-indigo-700">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-3">Sedia Untuk Mulakan?</h2>
+          <p className="text-blue-100 mb-8">Cuba demo percuma dulu — lihat sendiri macam mana sistem ni boleh bantu taska anda.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/dashboard" className="bg-white text-blue-700 px-8 py-3.5 rounded-xl font-bold hover:bg-blue-50 transition-colors">
+              Cuba Demo Sekarang
+            </Link>
+            <a href="https://wa.me/60XXXXXXXXX" className="border border-white/40 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/10 transition-colors">
+              WhatsApp Kami
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <span className="text-lg font-bold text-gray-900">SwiftTaska</span>
+      <footer className="bg-slate-900 text-slate-400 py-8 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm font-bold">S</span>
             </div>
-            <p className="text-gray-600">
-              © 2024 SwiftTaska. All rights reserved. Built for nurseries and kindergartens.
-            </p>
+            <span className="text-white font-bold">SwiftTaska</span>
+          </div>
+          <p className="text-sm">© 2025 SwiftTaska by SwiftApps · Sistem Pengurusan Taska Malaysia</p>
+          <div className="flex gap-4 text-sm">
+            <Link href="/dashboard" className="hover:text-white transition-colors">Demo</Link>
+            <a href="#pricing" className="hover:text-white transition-colors">Harga</a>
           </div>
         </div>
       </footer>
