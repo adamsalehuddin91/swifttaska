@@ -112,13 +112,13 @@ export default function PelajarPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.map(s => (
-                <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={s.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer" onClick={() => window.location.href = `/dashboard/pelajar/${s.id}`}>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full ${s.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
                         {s.avatar}
                       </div>
-                      <span className="text-sm font-semibold text-slate-800">{s.name}</span>
+                      <span className="text-sm font-semibold text-slate-800 hover:text-blue-600 transition-colors">{s.name}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-sm text-slate-600">{s.kelas}</td>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Search, Plus, MoreHorizontal } from 'lucide-react'
 
 const guardians = [
@@ -35,10 +36,12 @@ export default function PenjagaPage() {
           <h1 className="text-xl font-bold text-slate-900">Penjaga</h1>
           <p className="text-sm text-slate-500 mt-0.5">Urus rekod ibu bapa dan penjaga pelajar</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
-          <Plus size={15} />
-          Tambah Penjaga
-        </button>
+        <Link href="/dashboard/penjaga/tambah">
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+            <Plus size={15} />
+            Tambah Penjaga
+          </button>
+        </Link>
       </div>
 
       {/* Stats */}
