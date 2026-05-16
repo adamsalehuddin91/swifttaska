@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Save, Send } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Save, Send, CheckCircle2, Circle } from 'lucide-react'
 
 const students = [
-  { id: 1, name: 'Muhammad Harif bin Azri', kelas: 'Kelas Pelangi', umur: '4 Tahun', avatar: 'M', color: 'bg-blue-500' },
-  { id: 2, name: 'Nur Alia bt Hafiz',        kelas: 'Kelas Ceria',   umur: '3 Tahun', avatar: 'N', color: 'bg-pink-500' },
-  { id: 3, name: 'Qaisara Insyirah bt Farid',kelas: 'Kelas Matahari',umur: '5 Tahun', avatar: 'Q', color: 'bg-purple-500' },
+  { id: 1, name: 'Muhammad Harif bin Azri', kelas: 'Kelas Pelangi', umur: '4 Tahun', avatar: 'M', color: 'bg-blue-500',   doneToday: true  },
+  { id: 2, name: 'Nur Alia bt Hafiz',        kelas: 'Kelas Ceria',   umur: '3 Tahun', avatar: 'N', color: 'bg-pink-500',   doneToday: false },
+  { id: 3, name: 'Qaisara Insyirah bt Farid',kelas: 'Kelas Matahari',umur: '5 Tahun', avatar: 'Q', color: 'bg-purple-500', doneToday: false },
 ]
 
 const moods = [
@@ -32,8 +32,17 @@ export default function RekodHarianPage() {
   const [mood, setMood] = useState('gembira')
   const [statusKesihatan, setStatusKesihatan] = useState('Sihat')
   const [catatan, setCatatan] = useState('')
+  const [doneList, setDoneList] = useState<number[]>(students.filter(s => s.doneToday).map(s => s.id))
 
   const student = students[studentIdx]
+  const isStudentDone = doneList.includes(student.id)
+  const doneCount = doneList.length
+
+  const handleSimpan = () => {
+    if (!doneList.includes(student.id)) setDoneList(prev => [...prev, student.id])
+    const next = students.findIndex((_, i) => i > studentIdx && !doneList.includes(students[i].id))
+    if (next !== -1) setStudentIdx(next)
+  }
 
   const tidurDurasi = () => {
     const [mh, mm] = tidurMula.split(':').map(Number)
@@ -55,33 +64,64 @@ export default function RekodHarianPage() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-slate-500 bg-white border border-slate-200 px-3 py-2 rounded-xl">{date}</span>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+          <button onClick={handleSimpan} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
             <Send size={14} />
             Simpan Rekod
           </button>
         </div>
       </div>
 
-      {/* Student Selector */}
+      {/* Progress Hari Ini */}
       <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-semibold text-slate-700">Rekod Hari Ini</p>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${doneCount === students.length ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-50 text-amber-600'}`}>
+            {doneCount}/{students.length} selesai
+          </span>
+        </div>
+        <div className="flex gap-2">
+          {students.map((s, i) => (
+            <button key={s.id} onClick={() => setStudentIdx(i)}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-colors border ${
+                i === studentIdx ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}>
+              {doneList.includes(s.id)
+                ? <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                : <Circle size={13} className="text-slate-300 shrink-0" />}
+              {s.name.split(' ')[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Student Selector */}
+      <div className={`bg-white rounded-2xl border-2 p-4 shadow-sm transition-colors ${isStudentDone ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-100'}`}>
         <div className="flex items-center gap-4">
           <button onClick={() => setStudentIdx(Math.max(0, studentIdx - 1))}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500">
             <ChevronLeft size={16} />
           </button>
           <div className="flex items-center gap-3 flex-1">
-            <div className={`w-12 h-12 rounded-full ${student.color} flex items-center justify-center text-white font-bold text-lg`}>
-              {student.avatar}
+            <div className="relative">
+              <div className={`w-12 h-12 rounded-full ${student.color} flex items-center justify-center text-white font-bold text-lg`}>
+                {student.avatar}
+              </div>
+              {isStudentDone && (
+                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white">
+                  <CheckCircle2 size={11} className="text-white" />
+                </div>
+              )}
             </div>
             <div>
-              <p className="font-bold text-slate-900">{student.name}</p>
+              <div className="flex items-center gap-2">
+                <p className="font-bold text-slate-900">{student.name}</p>
+                {isStudentDone && <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Dah Rekod</span>}
+              </div>
               <p className="text-sm text-slate-500">{student.kelas} · {student.umur}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-400">
-            <span>{studentIdx + 1}</span>
-            <span>/</span>
-            <span>{students.length}</span>
+            <span>{studentIdx + 1}</span><span>/</span><span>{students.length}</span>
           </div>
           <button onClick={() => setStudentIdx(Math.min(students.length - 1, studentIdx + 1))}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500">

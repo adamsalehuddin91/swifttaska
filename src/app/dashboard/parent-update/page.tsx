@@ -1,7 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Plus, Image, Video, Smile, Send, ChevronRight } from 'lucide-react'
+import { Search, Plus, Image, Video, Smile, Send, ChevronRight, CheckCircle2, Clock } from 'lucide-react'
+
+const allStudents = [
+  { id: 1, name: 'Muhammad Harif', avatar: 'M', color: 'bg-blue-500',   updatedToday: true  },
+  { id: 2, name: 'Nur Alia',        avatar: 'N', color: 'bg-pink-500',   updatedToday: true  },
+  { id: 3, name: 'Arif Danial',     avatar: 'A', color: 'bg-emerald-500',updatedToday: false },
+  { id: 4, name: 'Sara Safiyya',    avatar: 'S', color: 'bg-orange-400', updatedToday: false },
+  { id: 5, name: 'Qaisara',         avatar: 'Q', color: 'bg-purple-500', updatedToday: false },
+]
 
 const updates = [
   {
@@ -80,6 +88,34 @@ export default function ParentUpdatePage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Status Hari Ini */}
+      <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-slate-700">Status Update Hari Ini</p>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+            allStudents.filter(s => s.updatedToday).length === allStudents.length
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-amber-50 text-amber-600'
+          }`}>
+            {allStudents.filter(s => s.updatedToday).length}/{allStudents.length} dihantar
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {allStudents.map(s => (
+            <div key={s.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium border ${
+              s.updatedToday
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : 'bg-slate-50 border-slate-200 text-slate-500'
+            }`}>
+              {s.updatedToday
+                ? <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                : <Clock size={13} className="text-slate-300 shrink-0" />}
+              {s.name}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Filters */}
