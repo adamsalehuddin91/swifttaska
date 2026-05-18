@@ -77,7 +77,7 @@ function ParentLayoutInner({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col max-w-sm mx-auto relative">
+    <div className="min-h-screen bg-slate-50 flex flex-col w-full relative">
       {/* Top bar */}
       <div className="bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ function ParentLayoutInner({ children }: { children: ReactNode }) {
       </main>
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-white border-t border-slate-100 flex z-10">
+      <nav className="fixed bottom-0 left-0 right-0 w-full bg-white border-t border-slate-100 flex z-10">
         {navItems.map(({ href, label, icon: Icon, exact }) => {
           const isActive = exact ? pathname === href : pathname.startsWith(href)
           return (
