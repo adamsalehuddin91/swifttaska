@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Users, UserCheck, CalendarCheck,
   MessageSquare, ClipboardList, CreditCard, Megaphone,
-  Settings, HelpCircle, TrendingUp, ChevronRight
+  Settings, HelpCircle, ChevronRight
 } from 'lucide-react'
 
 const navItems = [
@@ -62,20 +62,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Package Card */}
-      <div className="px-3 pb-3 space-y-2">
-        <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-4 text-white">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp size={14} className="text-blue-200" />
-            <p className="text-[10px] font-semibold text-blue-100 uppercase tracking-wider">Pakej Semasa</p>
-          </div>
-          <p className="font-bold text-sm mb-0.5">Pakej Standard</p>
-          <p className="text-blue-200 text-[10px] mb-3">RM 300/bulan · Aktif</p>
-          <button className="w-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors">
-            Naik Taraf Plan
-          </button>
-        </div>
-
+      <div className="px-3 pb-3">
         <div className="rounded-xl border border-slate-100 p-3">
           <div className="flex items-center gap-2 mb-1.5">
             <HelpCircle size={14} className="text-slate-400" />
