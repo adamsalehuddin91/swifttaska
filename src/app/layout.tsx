@@ -20,6 +20,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SwiftTaska - Nursery & Kindergarten Management",
   description: "Complete management system for nursery and kindergarten",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SwiftTaska",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({

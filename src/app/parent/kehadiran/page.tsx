@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { useChild } from '../child-context'
 
 const months = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ogs', 'Sep', 'Okt', 'Nov', 'Dis']
 
@@ -21,6 +22,7 @@ const log = [
 ]
 
 export default function ParentKehadiranPage() {
+  const { activeChild } = useChild()
   const [month, setMonth] = useState(4) // Mei = index 4
 
   const hadir     = Object.values(calendarData).filter(v => v === 1).length
@@ -32,7 +34,7 @@ export default function ParentKehadiranPage() {
       {/* Header */}
       <div>
         <h1 className="text-base font-bold text-slate-900">Rekod Kehadiran</h1>
-        <p className="text-xs text-slate-400">Nur Alia bt Hafiz · Kelas Ceria</p>
+        <p className="text-xs text-slate-400">{activeChild.name} · {activeChild.kelas}</p>
       </div>
 
       {/* Stats */}
